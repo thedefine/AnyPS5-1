@@ -7,6 +7,8 @@
 
 extern "C" {
 int APS5_VABI sceNpGetNpId(int user_id, NpId* np_id);
+int APS5_VABI sceNpSetContentRestriction(const NpContentRestriction* restriction);
+void APS5_VABI sceNpRegisterGamePresenceCallback(void* callback, void* userdata);
 }
 
 extern "C" {
@@ -67,5 +69,13 @@ int main() {
     Require(sceNpGetNpId(0x10000, &npId) == SignedOut, "sceNpGetNpId must report the user as signed out");
     Require(std::memcmp(&npId, &untouched, sizeof(npId)) == 0, "sceNpGetNpId must leave the NpId untouched");
     Require(sceNpGetNpId(0x10000, nullptr) == InvalidArgument, "sceNpGetNpId must reject a null NpId");
+
+    NpContentRestriction restriction{};
+    Require(sceNpSetContentRestriction(&restriction) == 0, "a content restriction must be accepted");
+    Require(sceNpSetContentRestriction(nullptr) == InvalidArgument, "a null content restriction must be rejected");
+
+    int presenceUserdata = 0;
+    sceNpRegisterGamePresenceCallback(&presenceUserdata, &presenceUserdata);
+    sceNpRegisterGamePresenceCallback(nullptr, nullptr);
     return 0;
 }
