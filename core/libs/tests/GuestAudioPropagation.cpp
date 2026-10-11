@@ -130,6 +130,8 @@ int main() {
     RequireThrows<std::runtime_error>([&] { sceAudioPropagationSourceCalculateAudioPaths(source, rays, 1, 1, nullptr, 0); }, "path calculation with rays");
     Require(sceAudioPropagationSourceSetAudioPaths(source, nullptr, 0) == 0, "empty audio paths failed");
     RequireThrows<std::runtime_error>([&] { sceAudioPropagationSourceSetAudioPaths(source, rays, 1); }, "set audio paths");
+    RequireThrows<std::invalid_argument>([&] { sceAudioPropagationSourceSetAudioPath(path, nullptr, 1.0f); }, "set a single audio path");
+    RequireThrows<std::invalid_argument>([&] { sceAudioPropagationSourceSetAudioPath(source, rays, 0.0f); }, "set a single audio path from a source handle");
 
     alignas(16) std::uint8_t otherArena[64]{};
     auto otherMemory = Memory();
